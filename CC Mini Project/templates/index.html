@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud SaaS</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>Cloud Storage System (HDFS)</h1>
+
+<div class="container">
+
+<h3>Upload File</h3>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+</form>
+
+<hr>
+
+<h3>List Files</h3>
+<button onclick="loadFiles()">Show Files</button>
+<ul id="fileList"></ul>
+
+<hr>
+
+<h3>Download File</h3>
+<input type="text" id="downloadFile" placeholder="Enter filename">
+<button onclick="downloadFile()">Download</button>
+
+<hr>
+
+<h3>Delete File</h3>
+<input type="text" id="deleteFile" placeholder="Enter filename">
+<button onclick="deleteFile()">Delete</button>
+
+</div>
+
+<script>
+function loadFiles() {
+    fetch('/list')
+    .then(res => res.text())
+    .then(data => {
+        let list = document.getElementById('fileList');
+        list.innerHTML = "";
+        data.split("\n").forEach(line => {
+            if(line.trim() !== ""){
+                let li = document.createElement("li");
+                li.innerText = line;
+                list.appendChild(li);
+            }
+        });
+    });
+}
+
+function downloadFile() {
+    let file = document.getElementById('downloadFile').value;
+    window.location.href = "/download/" + file;
+}
+
+function deleteFile() {
+    let file = document.getElementById('deleteFile').value;
+    fetch("/delete/" + file)
+    .then(res => res.text())
+    .then(data => alert(data));
+}
+</script>
+
+</body>
+</html>
